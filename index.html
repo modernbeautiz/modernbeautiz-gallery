@@ -48,10 +48,15 @@
         .album-card { 
             background: var(--card-bg); border-radius: 16px; overflow: hidden; 
             cursor: pointer; border: 1px solid #333; transition: transform 0.2s;
+            position: relative;
         }
         .album-card:active { transform: scale(0.97); }
         .album-card img { width: 100%; display: block; object-fit: contain; background: #000; max-height: 500px; }
         .album-card p { padding: 15px; margin: 0; font-weight: 800; font-size: 22px; text-align: center; color: var(--text); text-transform: uppercase; font-style: italic; }
+
+        /* VIEW COUNTER BADGES */
+        .view-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .img-views { font-size: 12px; opacity: 0.7; font-weight: 600; margin-top: -5px; }
 
         #no-results { 
             display: none; text-align: center; margin-top: 50px; 
@@ -140,20 +145,37 @@
 <script>
     const albumData = {
         "Malvika Mohan": ["image1.jpg", "image2.jpg"],
-        "Raashi Khanna": ["Raashi Khanna 001.jpg", "Raashi Khanna 002.jpg","Raashi Khanna 003.jpg","Raashi Khanna 004.jpg"],
+        "Raashi Khanna": ["Raashi Khanna 001.jpg", "Raashi Khanna 002.jpg", "Raashi Khanna 003.jpg", "Raashi Khanna 004.jpg"],
         "Rashmika Mandanna": ["Rashmika Mandanna 001.jpg"]
     };
 
     let isSearching = false;
 
+    // --- VIEW COUNTER LOGIC ---
+    function getViews(id) { return localStorage.getItem('view_' + id) || 0; }
+    function addView(id) { 
+        let current = parseInt(getViews(id));
+        localStorage.setItem('view_' + id, current + 1);
+    }
+
     function init() {
+        // Prevent immediate exit on Home by pushing an initial state
+        if (!history.state || history.state.view !== "home") {
+            history.replaceState({view: "home"}, "");
+            history.pushState({view: "home"}, "");
+        }
+
         const list = document.getElementById('album-list');
         list.innerHTML = '';
         for (let actress in albumData) {
+            const views = getViews(actress);
             const card = document.createElement('div');
             card.className = 'album-card';
-            card.onclick = () => showAlbum(actress);
-            card.innerHTML = `<img src="${albumData[actress][0]}" alt="${actress}"><p>${actress}</p>`;
+            card.onclick = () => { addView(actress); showAlbum(actress); };
+            card.innerHTML = `
+                <div class="view-count">👁️ ${views}</div>
+                <img src="${albumData[actress][0]}" alt="${actress}">
+                <p>${actress}</p>`;
             list.appendChild(card);
         }
     }
@@ -165,13 +187,11 @@
         const noResults = document.getElementById('no-results');
         const comingSoon = document.getElementById('coming-soon-sec');
         
-        // Push state only once when starting to search
         if (q.length > 0 && !isSearching) {
             isSearching = true;
             history.pushState({view: "search"}, "");
         } else if (q.length === 0 && isSearching) {
             isSearching = false;
-            // Only back out of history if it was a search state
             if(history.state?.view === "search") history.back();
         }
 
@@ -204,10 +224,12 @@
         } else if (document.getElementById('reels-view').style.display === 'block') {
             showHome(true);
         } else if (isSearching) {
-            // Clear search instead of exiting
             isSearching = false;
             document.getElementById('search-input').value = "";
             filterAlbums();
+        } else if (history.state?.view === "home") {
+            // Keep user on the home page when pressing back
+            history.pushState({view: "home"}, "");
         }
     };
 
@@ -221,12 +243,14 @@
         const list = document.getElementById('reels-list');
         list.innerHTML = '';
         albumData[name].forEach(imgSrc => {
+            const imgViews = getViews(imgSrc);
             const item = document.createElement('div');
             item.className = 'reel-item';
             item.innerHTML = `
                 <img src="${imgSrc}" loading="lazy">
                 <div class="reel-actions">
-                    <button class="preview-link" onclick="openPreview('${imgSrc}')">View Full Image</button>
+                    <span class="img-views">👁️ ${imgViews} views</span>
+                    <button class="preview-link" onclick="addView('${imgSrc}'); openPreview('${imgSrc}')">View Full Image</button>
                     <a href="${imgSrc}" download class="download-link">Download HD</a>
                 </div>`;
             list.appendChild(item);
@@ -249,6 +273,7 @@
         if (!isBack && history.state?.view === "album") { history.back(); return; }
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('reels-view').style.display = 'none';
+        init(); // Refresh home to update album counts
         window.scrollTo(0,0);
     }
 
