@@ -1,100 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ModernBeautiz Gallery</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernBeautiz Gallery</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #000000;
+            --card-bg: #f0f0f0;
+            --accent: #ff3b30;
+        }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #111;
-  color: white;
-}
+        [data-theme="dark"] {
+            --bg: #000000;
+            --text: #ffffff;
+            --card-bg: #1a1a1a;
+        }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  background: #222;
-}
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: 0.3s;
+        }
 
-button {
-  padding: 8px 12px;
-  cursor: pointer;
-}
+        /* HEADER & TOGGLE */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 100;
+            border-bottom: 1px solid var(--card-bg);
+        }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-  padding: 10px;
-}
+        .theme-switch-wrapper { display: flex; align-items: center; }
+        .theme-switch {
+            display: inline-block;
+            height: 26px;
+            position: relative;
+            width: 50px;
+        }
+        .theme-switch input { display: none; }
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .slider:before {
+            background-color: white;
+            bottom: 3px;
+            content: "";
+            height: 20px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 20px;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        input:checked + .slider { background-color: #444; }
+        input:checked + .slider:before { transform: translateX(22px); }
 
-.card {
-  position: relative;
-}
+        /* ALBUM GRID */
+        .container { padding: 15px; }
+        .album-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .album-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            text-align: center;
+        }
+        .album-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .album-card p { padding: 10px; margin: 0; font-weight: bold; }
 
-.card img {
-  width: 100%;
-  border-radius: 10px;
-}
+        /* REELS VIEW */
+        #reels-view { display: none; }
+        .reel-item {
+            max-width: 500px;
+            margin: 0 auto 40px auto;
+            border-bottom: 1px solid var(--card-bg);
+        }
+        .reel-item img { width: 100%; display: block; }
+        .reel-actions {
+            padding: 12px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .action-btn { cursor: pointer; font-size: 24px; background: none; border: none; color: var(--text); }
+        .download-link {
+            text-decoration: none;
+            background: var(--text);
+            color: var(--bg);
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .comment-box { padding: 0 12px 12px 12px; }
+        .comment-input {
+            width: 100%;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--card-bg);
+            color: var(--text);
+            padding: 5px 0;
+            outline: none;
+        }
 
-.download {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: black;
-  color: white;
-  padding: 5px;
-  font-size: 12px;
-}
-
-.light-mode {
-  background: white;
-  color: black;
-}
-
-.light-mode header {
-  background: #eee;
-}
-</style>
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
-
-<body>
+<body data-theme="dark">
 
 <header>
-  <h2>ModernBeautiz Gallery</h2>
-  <button onclick="toggleMode()">Toggle Mode</button>
+    <h2 id="logo" onclick="showHome()" style="cursor:pointer">ModernBeautiz</h2>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch">
+            <input type="checkbox" id="checkbox" onchange="toggleTheme()" checked>
+            <div class="slider">
+                <span>☀️</span>
+                <span>🌙</span>
+            </div>
+        </label>
+    </div>
 </header>
 
-<div class="gallery" id="gallery"></div>
+<div class="container" id="home-view">
+    <div class="album-grid" id="album-list">
+        </div>
+</div>
+
+<div class="container" id="reels-view">
+    <button class="back-btn" onclick="showHome()">← Back to Albums</button>
+    <div id="reels-list">
+        </div>
+</div>
 
 <script>
-let images = [
-  {src: "image1.jpg", category: "Events"},
-  {src: "image2.jpg", category: "Friends"},
-  {src: "image3.jpg", category: "Travel"}
-];
+    // --- CONFIGURE YOUR ALBUMS HERE ---
+    const albumData = {
+        "Actress One": [
+            "image1.jpg", 
+            "image2.jpg"
+        ],
+        "Actress Two": [
+            "20260304_013504.jpg"
+        ]
+    };
 
-let gallery = document.getElementById("gallery");
+    function init() {
+        const list = document.getElementById('album-list');
+        for (let actress in albumData) {
+            const card = document.createElement('div');
+            card.className = 'album-card';
+            card.onclick = () => showAlbum(actress);
+            card.innerHTML = `
+                <img src="${albumData[actress][0]}" alt="${actress}">
+                <p>${actress}</p>
+            `;
+            list.appendChild(card);
+        }
+    }
 
-images.forEach(img => {
-  let div = document.createElement("div");
-  div.className = "card";
+    function showAlbum(name) {
+        document.getElementById('home-view').style.display = 'none';
+        const reelsView = document.getElementById('reels-view');
+        reelsView.style.display = 'block';
+        
+        const list = document.getElementById('reels-list');
+        list.innerHTML = '';
+        
+        albumData[name].forEach(imgSrc => {
+            const item = document.createElement('div');
+            item.className = 'reel-item';
+            item.innerHTML = `
+                <img src="${imgSrc}">
+                <div class="reel-actions">
+                    <button class="action-btn" onclick="this.innerHTML = '❤️'">🤍</button>
+                    <a href="${imgSrc}" download class="download-link">Download Original HD</a>
+                </div>
+                <div class="comment-box">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
+                </div>
+            `;
+            list.appendChild(item);
+        });
+        window.scrollTo(0,0);
+    }
 
-  div.innerHTML = `
-    <img src="${img.src}">
-    <a href="${img.src}" download class="download">Download</a>
-  `;
+    function showHome() {
+        document.getElementById('home-view').style.display = 'block';
+        document.getElementById('reels-view').style.display = 'none';
+    }
 
-  gallery.appendChild(div);
-});
+    function toggleTheme() {
+        const currentTheme = document.body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
+    }
 
-function toggleMode(){
-  document.body.classList.toggle("light-mode");
-}
+    init();
 </script>
 
 </body>
