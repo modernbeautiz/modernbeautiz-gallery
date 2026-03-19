@@ -5,125 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModernBeautiz Gallery</title>
     <style>
-        :root {
-            --bg: #ffffff;
-            --text: #000000;
-            --card-bg: #f8f8f8;
-            --accent: #0095f6;
-        }
+        :root { --bg: #ffffff; --text: #000000; --card-bg: #f8f8f8; }
+        [data-theme="dark"] { --bg: #000000; --text: #ffffff; --card-bg: #121212; }
 
-        [data-theme="dark"] {
-            --bg: #000000;
-            --text: #ffffff;
-            --card-bg: #121212;
-        }
-
-        body {
-            margin: 0;
-            font-family: -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            transition: 0.3s;
-        }
-
-        /* HEADER & ELLIPSE TOGGLE */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 1000;
-            border-bottom: 1px solid var(--card-bg);
-        }
-
-        /* Center the title since 3-dots were removed */
-        header h2 {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            margin: 0;
-        }
+        body { margin: 0; font-family: -apple-system, sans-serif; background-color: var(--bg); color: var(--text); transition: 0.3s; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; position: sticky; top: 0; background: var(--bg); z-index: 1000; border-bottom: 1px solid var(--card-bg); }
+        header h2 { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
 
         .switch-box { position: relative; width: 60px; height: 30px; margin-left: auto; }
         .switch-box input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 34px;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 14px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px;
-            background-color: white; transition: .4s; border-radius: 50%; z-index: 2;
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 14px; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; z-index: 2; }
         input:checked + .slider { background-color: #444; }
         input:checked + .slider:before { transform: translateX(30px); }
 
-        /* VERTICAL ALBUM LIST (One per row) */
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .album-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-        .album-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            text-align: center;
-            border: 1px solid #333;
-        }
-
-        /* NEW STYLE: Original full size for album cover (matching inside picture) */
-        .album-card img {
-            width: 100%;
-            display: block;
-            object-fit: contain; /* Prevents stretching */
-        }
-
+        .album-grid { display: flex; flex-direction: column; gap: 25px; }
+        .album-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; cursor: pointer; text-align: center; border: 1px solid #333; }
+        .album-card img { width: 100%; display: block; object-fit: contain; }
         .album-card p { padding: 15px; margin: 0; font-weight: bold; font-size: 18px; }
 
-        /* REELS VIEW */
         #reels-view { display: none; }
-        .reel-item {
-            margin-bottom: 40px;
-            border-bottom: 1px solid var(--card-bg);
-            padding-bottom: 20px;
-        }
-        .reel-item img {
-            width: 100%;
-            border-radius: 8px;
-            display: block;
-            object-fit: contain; /* Prevents stretching */
-        }
-        .reel-actions {
-            padding: 12px 0;
-            display: flex;
-            justify-content: center; /* Centers the download button since likes/comments were removed */
-            align-items: center;
-        }
-        .download-link {
-            text-decoration: none;
-            background: var(--text);
-            color: var(--bg);
-            padding: 8px 25px; /* Slightly wider button */
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .back-btn {
-            background: none;
-            border: 1px solid #333;
-            color: var(--text);
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
+        .reel-item { margin-bottom: 40px; border-bottom: 1px solid var(--card-bg); padding-bottom: 20px; }
+        .reel-item img { width: 100%; border-radius: 8px; display: block; object-fit: contain; }
+        .reel-actions { padding: 12px 0; display: flex; justify-content: center; align-items: center; }
+        .download-link { text-decoration: none; background: var(--text); color: var(--bg); padding: 8px 25px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+        .back-btn { background: none; border: 1px solid #333; color: var(--text); padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
     </style>
 </head>
 <body data-theme="dark">
@@ -146,24 +53,26 @@
 </div>
 
 <script>
-    // --- CONFIGURE YOUR ALBUMS HERE ---
-    // base: The start of the filename
-    // count: How many images are in that album
+    // --- FLEXIBLE CONFIG ---
+    // base: Filename prefix
+    // count: Number of photos
+    // ext: Use ".jpg" or ".png" (MUST include the dot)
     const albumData = {
-        "Malvika Mohan": { base: "Malvika Mohan ", count: 2 }, 
-        "Actress Two": { base: "Actress2_", count: 1 }
+        "Malvika Mohan": { base: "Malvika Mohan ", count: 3, ext: ".png" },
+        "Actress Two":   { base: "Actress2_", count: 1, ext: ".jpg" }
     };
 
     function init() {
         const list = document.getElementById('album-list');
         list.innerHTML = '';
         for (let actress in albumData) {
+            const data = albumData[actress];
             const card = document.createElement('div');
             card.className = 'album-card';
             card.onclick = () => showAlbum(actress);
             
-            // Uses "Name 1.jpg" as the cover
-            const coverImg = `${albumData[actress].base}1.jpg`;
+            // Logic: Base + 1 + Extension
+            const coverImg = `${data.base}1${data.ext}`;
             
             card.innerHTML = `
                 <img src="${coverImg}" alt="${actress}">
@@ -172,7 +81,7 @@
             list.appendChild(card);
         }
 
-        window.onpopstate = function(event) {
+        window.onpopstate = function() {
             if (document.getElementById('reels-view').style.display === 'block') {
                 showHome(true); 
             }
@@ -182,17 +91,14 @@
     function showAlbum(name) {
         history.pushState({view: "album"}, ""); 
         document.getElementById('home-view').style.display = 'none';
-        const reelsView = document.getElementById('reels-view');
-        reelsView.style.display = 'block';
+        document.getElementById('reels-view').style.display = 'block';
         
         const list = document.getElementById('reels-list');
         list.innerHTML = '';
-        
         const data = albumData[name];
 
-        // This loop automatically creates all 1.jpg, 2.jpg, etc.
         for (let i = 1; i <= data.count; i++) {
-            const imgSrc = `${data.base}${i}.jpg`;
+            const imgSrc = `${data.base}${i}${data.ext}`;
             const item = document.createElement('div');
             item.className = 'reel-item';
             item.innerHTML = `
@@ -208,8 +114,7 @@
 
     function showHome(isBackAction = false) {
         if (!isBackAction && history.state && history.state.view === "album") {
-            history.back();
-            return;
+            history.back(); return;
         }
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('reels-view').style.display = 'none';
@@ -217,11 +122,12 @@
     }
 
     function toggleTheme() {
-        const body = document.body;
-        const currentTheme = body.getAttribute('data-theme');
+        const currentTheme = document.body.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        body.setAttribute('data-theme', newTheme);
+        document.body.setAttribute('data-theme', newTheme);
     }
 
     init();
 </script>
+</body>
+</html>
