@@ -53,26 +53,29 @@
 </div>
 
 <script>
-    // --- FLEXIBLE CONFIG ---
-    // base: Filename prefix
-    // count: Number of photos
-    // ext: Use ".jpg" or ".png" (MUST include the dot)
+    // --- MIXED FORMAT CONFIG ---
+    // List every image name exactly as it appears on GitHub
     const albumData = {
-        "Malvika Mohan": { base: "Malvika Mohan ", count: 3, ext: ".png" },
-        "Actress Two":   { base: "Actress2_", count: 1, ext: ".jpg" }
+        "Malvika Mohan": [
+            "Malvika Mohan 1.jpg", 
+            "Malvika Mohan 2.png", 
+            "Malvika Mohan 3.webp"
+        ],
+        "Actress Two": [
+            "Actress2_1.jpg"
+        ]
     };
 
     function init() {
         const list = document.getElementById('album-list');
         list.innerHTML = '';
         for (let actress in albumData) {
-            const data = albumData[actress];
             const card = document.createElement('div');
             card.className = 'album-card';
             card.onclick = () => showAlbum(actress);
             
-            // Logic: Base + 1 + Extension
-            const coverImg = `${data.base}1${data.ext}`;
+            // First item in the array is the cover
+            const coverImg = albumData[actress][0];
             
             card.innerHTML = `
                 <img src="${coverImg}" alt="${actress}">
@@ -95,10 +98,9 @@
         
         const list = document.getElementById('reels-list');
         list.innerHTML = '';
-        const data = albumData[name];
-
-        for (let i = 1; i <= data.count; i++) {
-            const imgSrc = `${data.base}${i}${data.ext}`;
+        
+        // Loops through the array and shows every file type automatically
+        albumData[name].forEach(imgSrc => {
             const item = document.createElement('div');
             item.className = 'reel-item';
             item.innerHTML = `
@@ -108,7 +110,7 @@
                 </div>
             `;
             list.appendChild(item);
-        }
+        });
         window.scrollTo(0,0);
     }
 
