@@ -179,6 +179,7 @@
 
     function init() {
         const list = document.getElementById('album-list');
+        list.innerHTML = ''; // Clears the list before building
         for (let actress in albumData) {
             const card = document.createElement('div');
             card.className = 'album-card';
@@ -189,9 +190,18 @@
             `;
             list.appendChild(card);
         }
+
+        // --- THE FIX: MOBILE BACK BUTTON LOGIC ---
+        window.onpopstate = function(event) {
+            // This detects when the user presses the phone's physical back button
+            showHome(true); 
+        };
     }
 
     function showAlbum(name) {
+        // This line creates a "fake" history entry so the back button has somewhere to go
+        history.pushState({view: "album"}, ""); 
+
         document.getElementById('home-view').style.display = 'none';
         const reelsView = document.getElementById('reels-view');
         reelsView.style.display = 'block';
@@ -217,9 +227,16 @@
         window.scrollTo(0,0);
     }
 
-    function showHome() {
+    function showHome(isBackAction = false) {
+        // If they click the "Back to Albums" button on screen
+        if (!isBackAction && history.state && history.state.view === "album") {
+            history.back();
+            return;
+        }
+
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('reels-view').style.display = 'none';
+        window.scrollTo(0,0);
     }
 
     function toggleTheme() {
@@ -230,6 +247,3 @@
 
     init();
 </script>
-
-</body>
-</html>
