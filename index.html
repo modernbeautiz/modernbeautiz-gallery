@@ -39,9 +39,15 @@
             border-bottom: 1px solid var(--card-bg);
         }
 
-        .admin-dots { font-size: 28px; cursor: pointer; padding: 5px; }
+        /* Center the title since 3-dots were removed */
+        header h2 {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+        }
 
-        .switch-box { position: relative; width: 60px; height: 30px; }
+        .switch-box { position: relative; width: 60px; height: 30px; margin-left: auto; }
         .switch-box input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
@@ -55,19 +61,11 @@
         input:checked + .slider { background-color: #444; }
         input:checked + .slider:before { transform: translateX(30px); }
 
-        /* ADMIN MENU */
-        #admin-menu { 
-            display: none; position: fixed; top: 60px; left: 10px; 
-            background: var(--card-bg); border: 1px solid var(--accent); 
-            padding: 15px; border-radius: 10px; z-index: 2000; width: 250px;
-        }
-        #admin-menu button { width: 100%; margin: 5px 0; padding: 10px; cursor: pointer; border-radius: 5px; border: none; background: #333; color: white; }
-
         /* VERTICAL ALBUM LIST (One per row) */
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .album-grid {
             display: flex;
-            flex-direction: column; /* This makes it vertical */
+            flex-direction: column;
             gap: 25px;
         }
         .album-card {
@@ -78,7 +76,14 @@
             text-align: center;
             border: 1px solid #333;
         }
-        .album-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+
+        /* NEW STYLE: Original full size for album cover (matching inside picture) */
+        .album-card img {
+            width: 100%;
+            display: block;
+            object-fit: contain; /* Prevents stretching */
+        }
+
         .album-card p { padding: 15px; margin: 0; font-weight: bold; font-size: 18px; }
 
         /* REELS VIEW */
@@ -88,19 +93,23 @@
             border-bottom: 1px solid var(--card-bg);
             padding-bottom: 20px;
         }
-        .reel-item img { width: 100%; border-radius: 8px; display: block; }
+        .reel-item img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+            object-fit: contain; /* Prevents stretching */
+        }
         .reel-actions {
             padding: 12px 0;
             display: flex;
-            gap: 20px;
+            justify-content: center; /* Centers the download button since likes/comments were removed */
             align-items: center;
         }
-        .action-btn { cursor: pointer; font-size: 24px; background: none; border: none; color: var(--text); }
         .download-link {
             text-decoration: none;
             background: var(--text);
             color: var(--bg);
-            padding: 8px 18px;
+            padding: 8px 25px; /* Slightly wider button */
             border-radius: 20px;
             font-size: 14px;
             font-weight: bold;
@@ -120,18 +129,12 @@
 <body data-theme="dark">
 
 <header>
-    <div class="admin-dots" onclick="toggleAdmin()">⋮</div>
-    <h2 onclick="showHome()" style="cursor:pointer; margin:0;">ModernBeautiz</h2>
+    <h2 onclick="showHome()" style="cursor:pointer;">ModernBeautiz</h2>
     <label class="switch-box">
         <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked>
         <span class="slider"><span>☀️</span><span>🌙</span></span>
     </label>
 </header>
-
-<div id="admin-menu">
-    <h4 style="margin: 0 0 10px 0;">Admin Dashboard</h4>
-    <button onclick="alert('Upload to GitHub & add to albumData in script.')">Add Album/Images</button>
-</div>
 
 <div class="container" id="home-view">
     <div class="album-grid" id="album-list"></div>
@@ -144,6 +147,7 @@
 
 <script>
     // --- CONFIGURE YOUR ALBUMS HERE ---
+    // (Ensure you upload the images and use the correct file names below)
     const albumData = {
         "Malvika Mohan": [
             "image1.jpg", 
@@ -161,6 +165,8 @@
             const card = document.createElement('div');
             card.className = 'album-card';
             card.onclick = () => showAlbum(actress);
+            
+            // Displays the first image of the album as the original-size cover
             card.innerHTML = `
                 <img src="${albumData[actress][0]}" alt="${actress}">
                 <p>${actress}</p>
@@ -185,13 +191,15 @@
         const list = document.getElementById('reels-list');
         list.innerHTML = '';
         
+        // Loop through and display original-size images inside the album
         albumData[name].forEach(imgSrc => {
             const item = document.createElement('div');
             item.className = 'reel-item';
+            
+            // Likes and comments sections have been removed
             item.innerHTML = `
                 <img src="${imgSrc}">
                 <div class="reel-actions">
-                    <button class="action-btn" onclick="this.innerHTML = '❤️'">🤍</button>
                     <a href="${imgSrc}" download class="download-link">Download Original HD</a>
                 </div>
             `;
@@ -215,11 +223,6 @@
         const currentTheme = body.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         body.setAttribute('data-theme', newTheme);
-    }
-
-    function toggleAdmin() {
-        const menu = document.getElementById('admin-menu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
     init();
