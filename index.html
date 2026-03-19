@@ -40,12 +40,17 @@
         .album-card img { width: 100%; display: block; object-fit: contain; background: #000; }
         .album-card p { padding: 12px; margin: 0; font-weight: 500; font-size: 16px; }
 
-        #no-results { display: none; text-align: center; margin-top: 50px; opacity: 0.6; }
+        #no-results { display: none; text-align: center; margin-top: 50px; opacity: 0.8; font-weight: 600; color: var(--accent); }
 
         .switch-box { position: relative; width: 50px; height: 26px; }
         .switch-box input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; display: flex; align-items: center; padding: 0 5px; }
+        
+        /* --- ADDED SUN/MOON SYMBOLS --- */
+        .slider:after { content: '🌙'; font-size: 12px; margin-left: auto; transition: 0.4s; }
+        input:checked + .slider:after { content: '☀️'; margin-left: 0; margin-right: auto; }
+
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; z-index: 2; }
         input:checked + .slider { background-color: #444; }
         input:checked + .slider:before { transform: translateX(24px); }
 
@@ -56,34 +61,14 @@
         .download-link { text-decoration: none; background: var(--accent); color: white; padding: 10px 30px; border-radius: 25px; font-weight: 600; }
         .back-btn { background: none; border: none; color: var(--accent); font-size: 16px; font-weight: 600; cursor: pointer; padding: 15px 0; }
 
-        /* --- NEW: Scroll to Top Button Style --- */
         #scrollTopBtn {
-            display: none; /* Hidden by default */
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px; 
-            z-index: 99; 
-            font-size: 20px; 
-            border: none; 
-            outline: none; 
-            background-color: var(--accent); 
-            color: white; 
-            cursor: pointer; 
-            width: 45px;
-            height: 45px;
-            border-radius: 50%; /* Makes it a perfect circle */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0; /* For smooth fade-in */
-            pointer-events: none;
+            display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; 
+            font-size: 20px; border: none; outline: none; background-color: var(--accent); 
+            color: white; cursor: pointer; width: 45px; height: 45px; border-radius: 50%; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; display: flex;
+            align-items: center; justify-content: center; opacity: 0; pointer-events: none;
         }
-        #scrollTopBtn.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        #scrollTopBtn.show { opacity: 1; pointer-events: auto; }
         #scrollTopBtn:active { transform: scale(0.9); }
     </style>
 </head>
@@ -106,7 +91,7 @@
 </header>
 
 <div class="container" id="home-view">
-    <div id="no-results">No albums found matching that name.</div>
+    <div id="no-results"></div>
     <div class="album-grid" id="album-list"></div>
 </div>
 
@@ -163,7 +148,12 @@
             }
         }
 
-        noResults.style.display = foundAny ? "none" : "block";
+        if (!foundAny) {
+            noResults.innerHTML = `Sorry, "${query}" is not available in our gallery yet.`;
+            noResults.style.display = "block";
+        } else {
+            noResults.style.display = "none";
+        }
     }
 
     function showAlbum(name) {
@@ -203,15 +193,13 @@
         body.setAttribute('data-theme', newTheme);
     }
 
-    // --- NEW: Scroll to Top JavaScript Logic ---
     window.onscroll = function() {
         const btn = document.getElementById("scrollTopBtn");
-        // Show the button if you scroll down 300px from the top
         if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
             btn.style.display = "flex";
-            setTimeout(() => btn.classList.add("show"), 10); // Smooth fade in
+            setTimeout(() => btn.classList.add("show"), 10);
         } else {
-            btn.classList.remove("show"); // Fade out
+            btn.classList.remove("show");
             setTimeout(() => {
                 if(!btn.classList.contains("show")) btn.style.display = "none";
             }, 300);
@@ -221,7 +209,7 @@
     function scrollToTop() {
         window.scrollTo({
             top: 0,
-            behavior: 'smooth' // This makes it glide up beautifully instead of jumping
+            behavior: 'smooth'
         });
     }
 
