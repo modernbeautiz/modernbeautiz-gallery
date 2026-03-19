@@ -17,16 +17,20 @@
         }
         header h2 { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; cursor: pointer; font-size: 1.2rem; }
 
-        .search-container { position: relative; margin: 15px 0; width: 100%; }
-        .search-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #8e8e8e; pointer-events: none; }
+        .header-right {
+            display: flex; align-items: center; gap: 15px; margin-left: auto; z-index: 2;
+        }
+
+        .search-container { position: relative; width: 160px; }
+        .search-container i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #8e8e8e; pointer-events: none; font-size: 14px;}
         #search-input { 
-            width: 100%; padding: 10px 10px 10px 35px; border-radius: 10px; 
+            width: 100%; padding: 8px 10px 8px 30px; border-radius: 20px; 
             border: none; background: var(--search-bg); color: var(--text); 
-            box-sizing: border-box; font-size: 16px; outline: none;
+            box-sizing: border-box; font-size: 14px; outline: none;
         }
 
         .container { padding: 0 15px 15px 15px; max-width: 500px; margin: auto; }
-        .album-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 10px; }
+        .album-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 15px; }
         
         .album-card { 
             background: var(--card-bg); border-radius: 8px; overflow: hidden; 
@@ -51,24 +55,57 @@
         .reel-actions { padding: 15px; display: flex; justify-content: center; background: var(--bg); }
         .download-link { text-decoration: none; background: var(--accent); color: white; padding: 10px 30px; border-radius: 25px; font-weight: 600; }
         .back-btn { background: none; border: none; color: var(--accent); font-size: 16px; font-weight: 600; cursor: pointer; padding: 15px 0; }
+
+        /* --- NEW: Scroll to Top Button Style --- */
+        #scrollTopBtn {
+            display: none; /* Hidden by default */
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 99; 
+            font-size: 20px; 
+            border: none; 
+            outline: none; 
+            background-color: var(--accent); 
+            color: white; 
+            cursor: pointer; 
+            width: 45px;
+            height: 45px;
+            border-radius: 50%; /* Makes it a perfect circle */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; /* For smooth fade-in */
+            pointer-events: none;
+        }
+        #scrollTopBtn.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #scrollTopBtn:active { transform: scale(0.9); }
     </style>
 </head>
 <body data-theme="dark">
 
 <header>
     <h2 onclick="showHome()">ModernBeautiz</h2>
-    <label class="switch-box">
-        <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked>
-        <span class="slider"></span>
-    </label>
+    
+    <div class="header-right">
+        <div class="search-container">
+            <i>🔍</i>
+            <input type="text" id="search-input" placeholder="Search..." oninput="filterAlbums()">
+        </div>
+        
+        <label class="switch-box">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
 </header>
 
 <div class="container" id="home-view">
-    <div class="search-container">
-        <i>🔍</i>
-        <input type="text" id="search-input" placeholder="Search actress name..." oninput="filterAlbums()">
-    </div>
-    
     <div id="no-results">No albums found matching that name.</div>
     <div class="album-grid" id="album-list"></div>
 </div>
@@ -78,8 +115,9 @@
     <div id="reels-list"></div>
 </div>
 
+<button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+
 <script>
-    // Simple list of albums - Add any actress here!
     const albumData = {
         "Malvika Mohan": ["Malvika Mohan 1.jpg", "Malvika Mohan 2.png", "Malvika Mohan 3.webp"],
         "Raashi Khanna": ["Raashi Khanna 001.jpg", "Raashi Khanna 002.jpg","Raashi Khanna 003.jpg","Raashi Khanna 004.jpg"],
@@ -163,6 +201,28 @@
         const body = document.body;
         const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         body.setAttribute('data-theme', newTheme);
+    }
+
+    // --- NEW: Scroll to Top JavaScript Logic ---
+    window.onscroll = function() {
+        const btn = document.getElementById("scrollTopBtn");
+        // Show the button if you scroll down 300px from the top
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            btn.style.display = "flex";
+            setTimeout(() => btn.classList.add("show"), 10); // Smooth fade in
+        } else {
+            btn.classList.remove("show"); // Fade out
+            setTimeout(() => {
+                if(!btn.classList.contains("show")) btn.style.display = "none";
+            }, 300);
+        }
+    };
+
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // This makes it glide up beautifully instead of jumping
+        });
     }
 
     init();
