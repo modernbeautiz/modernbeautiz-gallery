@@ -5,129 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModernBeautiz Gallery</title>
     <style>
-        :root { --bg: #ffffff; --text: #000000; --card: #f8f8f8; --accent: #0095f6; }
-        [data-theme="dark"] { --bg: #000000; --text: #ffffff; --card: #121212; --accent: #0095f6; }
-
-        body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; }
-        
-        /* HEADER & ELLIPSE TOGGLE */
-        header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px 20px; position: sticky; top: 0; background: var(--bg); 
-            z-index: 1000; border-bottom: 1px solid #333;
+        :root {
+            --bg: #ffffff;
+            --text: #000000;
+            --card-bg: #f0f0f0;
+            --accent: #ff3b30;
         }
 
-        .switch-box { position: relative; width: 60px; height: 30px; }
-        .switch-box input { opacity: 0; width: 0; height: 0; }
+        [data-theme="dark"] {
+            --bg: #000000;
+            --text: #ffffff;
+            --card-bg: #1a1a1a;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: 0.3s;
+        }
+
+        /* HEADER & TOGGLE */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 100;
+            border-bottom: 1px solid var(--card-bg);
+        }
+
+        .theme-switch-wrapper { display: flex; align-items: center; }
+        .theme-switch {
+            display: inline-block;
+            height: 26px;
+            position: relative;
+            width: 50px;
+        }
+        .theme-switch input { display: none; }
         .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 34px;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 14px;
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
         }
         .slider:before {
-            position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px;
-            background-color: white; transition: .4s; border-radius: 50%; z-index: 2;
+            background-color: white;
+            bottom: 3px;
+            content: "";
+            height: 20px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 20px;
+            border-radius: 50%;
+            z-index: 2;
         }
         input:checked + .slider { background-color: #444; }
-        input:checked + .slider:before { transform: translateX(30px); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
         /* ALBUM GRID */
-        .container { padding: 15px; max-width: 800px; margin: auto; }
-        .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .album-card { background: var(--card); border-radius: 15px; overflow: hidden; cursor: pointer; border: 1px solid #333; }
+        .container { padding: 15px; }
+        .album-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .album-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            text-align: center;
+        }
         .album-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .album-card p { padding: 10px; margin: 0; text-align: center; font-weight: bold; }
+        .album-card p { padding: 10px; margin: 0; font-weight: bold; }
 
-        /* REELS VIEW (VERTICAL SCROLL) */
+        /* REELS VIEW */
         #reels-view { display: none; }
-        .reel-item { margin-bottom: 30px; border-bottom: 1px solid var(--card); padding-bottom: 10px; }
-        .reel-item img { width: 100%; border-radius: 5px; }
-        .reel-btns { display: flex; gap: 20px; padding: 10px 0; align-items: center; }
-        .btn { background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; }
-        .dl-link { background: var(--text); color: var(--bg); padding: 6px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .reel-item {
+            max-width: 500px;
+            margin: 0 auto 40px auto;
+            border-bottom: 1px solid var(--card-bg);
+        }
+        .reel-item img { width: 100%; display: block; }
+        .reel-actions {
+            padding: 12px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .action-btn { cursor: pointer; font-size: 24px; background: none; border: none; color: var(--text); }
+        .download-link {
+            text-decoration: none;
+            background: var(--text);
+            color: var(--bg);
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .comment-box { padding: 0 12px 12px 12px; }
+        .comment-input {
+            width: 100%;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--card-bg);
+            color: var(--text);
+            padding: 5px 0;
+            outline: none;
+        }
 
-        /* ADMIN OVERLAY (3 DOTS) */
-        .admin-dots { font-size: 30px; cursor: pointer; padding: 5px; }
-        #admin-menu { 
-            display: none; position: fixed; top: 60px; left: 10px; 
-            background: var(--card); border: 1px solid var(--accent); 
-            padding: 15px; border-radius: 10px; z-index: 2000; width: 250px;
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body data-theme="dark">
 
 <header>
-    <div class="admin-dots" onclick="toggleAdmin()">⋮</div>
-    <h2 onclick="showHome()" style="cursor:pointer">ModernBeautiz</h2>
-    <label class="switch-box">
-        <input type="checkbox" id="theme-toggle" onchange="toggleMode()" checked>
-        <span class="slider"><span>☀️</span><span>🌙</span></span>
-    </label>
+    <h2 id="logo" onclick="showHome()" style="cursor:pointer">ModernBeautiz</h2>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch">
+            <input type="checkbox" id="checkbox" onchange="toggleTheme()" checked>
+            <div class="slider">
+                <span>☀️</span>
+                <span>🌙</span>
+            </div>
+        </label>
+    </div>
 </header>
 
-<div id="admin-menu">
-    <h4 style="margin-top:0">Admin Tools</h4>
-    <p style="font-size:12px">Note: Changes here must be copied to GitHub index.html to save permanently.</p>
-    <button onclick="alert('To Add: Open index.html on GitHub and add a new name to the albumData list.')" style="width:100%">Add New Album</button>
-    <br><br>
-    <button onclick="alert('To Delete: Remove the name and images from the albumData list in your code.')" style="width:100%; color:red">Delete Album/Photo</button>
-</div>
-
 <div class="container" id="home-view">
-    <div class="album-grid" id="album-list"></div>
+    <div class="album-grid" id="album-list">
+        </div>
 </div>
 
 <div class="container" id="reels-view">
-    <button onclick="showHome()" style="margin-bottom:15px; background:none; color:var(--text); border:1px solid #333; padding:5px 15px; border-radius:5px; cursor:pointer">← Back to Albums</button>
-    <div id="reels-list"></div>
+    <button class="back-btn" onclick="showHome()">← Back to Albums</button>
+    <div id="reels-list">
+        </div>
 </div>
 
 <script>
-    // ---------------------------------------------------------
-    // ADMIN: ADD YOUR ALBUMS AND RANDOM IMAGE NAMES HERE
-    // ---------------------------------------------------------
+    // --- CONFIGURE YOUR ALBUMS HERE ---
     const albumData = {
-        "Actress Name 1": [
-            "20260304_013504.jpg", 
-            "image1.jpg"
+        "Actress One": [
+            "image1.jpg", 
+            "image2.jpg"
         ],
-        "Actress Name 2": [
-            "another_random_name.jpg"
+        "Actress Two": [
+            "20260304_013504.jpg"
         ]
     };
 
     function init() {
         const list = document.getElementById('album-list');
-        list.innerHTML = '';
-        for (let name in albumData) {
+        for (let actress in albumData) {
             const card = document.createElement('div');
             card.className = 'album-card';
-            card.onclick = () => showReels(name);
-            card.innerHTML = `<img src="${albumData[name][0]}"><p>${name}</p>`;
+            card.onclick = () => showAlbum(actress);
+            card.innerHTML = `
+                <img src="${albumData[actress][0]}" alt="${actress}">
+                <p>${actress}</p>
+            `;
             list.appendChild(card);
         }
     }
 
-    function showReels(name) {
+    function showAlbum(name) {
         document.getElementById('home-view').style.display = 'none';
-        const view = document.getElementById('reels-view');
-        view.style.display = 'block';
+        const reelsView = document.getElementById('reels-view');
+        reelsView.style.display = 'block';
+        
         const list = document.getElementById('reels-list');
         list.innerHTML = '';
-
-        albumData[name].forEach(img => {
-            const div = document.createElement('div');
-            div.className = 'reel-item';
-            div.innerHTML = `
-                <img src="${img}">
-                <div class="reel-btns">
-                    <button class="btn" onclick="this.innerText='❤️'">🤍</button>
-                    <button class="btn" onclick="alert('Comment saved (locally)')">💬</button>
-                    <a href="${img}" download class="dl-link">Download Original HD</a>
+        
+        albumData[name].forEach(imgSrc => {
+            const item = document.createElement('div');
+            item.className = 'reel-item';
+            item.innerHTML = `
+                <img src="${imgSrc}">
+                <div class="reel-actions">
+                    <button class="action-btn" onclick="this.innerHTML = '❤️'">🤍</button>
+                    <a href="${imgSrc}" download class="download-link">Download Original HD</a>
+                </div>
+                <div class="comment-box">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
                 </div>
             `;
-            list.appendChild(div);
+            list.appendChild(item);
         });
         window.scrollTo(0,0);
     }
@@ -137,15 +222,10 @@
         document.getElementById('reels-view').style.display = 'none';
     }
 
-    function toggleMode() {
-        const body = document.body;
-        const isDark = body.getAttribute('data-theme') === 'dark';
-        body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    }
-
-    function toggleAdmin() {
-        const menu = document.getElementById('admin-menu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    function toggleTheme() {
+        const currentTheme = document.body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
     }
 
     init();
