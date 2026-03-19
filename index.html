@@ -8,81 +8,67 @@
         :root {
             --bg: #ffffff;
             --text: #000000;
-            --card-bg: #f0f0f0;
-            --accent: #ff3b30;
+            --card-bg: #f8f8f8;
+            --accent: #0095f6;
         }
 
         [data-theme="dark"] {
             --bg: #000000;
             --text: #ffffff;
-            --card-bg: #1a1a1a;
+            --card-bg: #121212;
         }
 
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             transition: 0.3s;
         }
 
-        /* HEADER & TOGGLE */
+        /* HEADER & ELLIPSE TOGGLE */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 10px 20px;
             position: sticky;
             top: 0;
             background: var(--bg);
-            z-index: 100;
+            z-index: 1000;
             border-bottom: 1px solid var(--card-bg);
         }
 
-        .theme-switch-wrapper { display: flex; align-items: center; }
-        .theme-switch {
-            display: inline-block;
-            height: 26px;
-            position: relative;
-            width: 50px;
-        }
-        .theme-switch input { display: none; }
+        .admin-dots { font-size: 28px; cursor: pointer; padding: 5px; }
+
+        .switch-box { position: relative; width: 60px; height: 30px; }
+        .switch-box input { opacity: 0; width: 0; height: 0; }
         .slider {
-            background-color: #ccc;
-            bottom: 0;
-            cursor: pointer;
-            left: 0;
-            position: absolute;
-            right: 0;
-            top: 0;
-            transition: .4s;
-            border-radius: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 34px;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 14px;
         }
         .slider:before {
-            background-color: white;
-            bottom: 3px;
-            content: "";
-            height: 20px;
-            left: 4px;
-            position: absolute;
-            transition: .4s;
-            width: 20px;
-            border-radius: 50%;
-            z-index: 2;
+            position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%; z-index: 2;
         }
         input:checked + .slider { background-color: #444; }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(30px); }
 
-        /* ALBUM GRID */
-        .container { padding: 15px; }
+        /* ADMIN MENU */
+        #admin-menu { 
+            display: none; position: fixed; top: 60px; left: 10px; 
+            background: var(--card-bg); border: 1px solid var(--accent); 
+            padding: 15px; border-radius: 10px; z-index: 2000; width: 250px;
+        }
+        #admin-menu button { width: 100%; margin: 5px 0; padding: 10px; cursor: pointer; border-radius: 5px; border: none; background: #333; color: white; }
+
+        /* VERTICAL ALBUM LIST (One per row) */
+        .container { padding: 15px; max-width: 500px; margin: auto; }
         .album-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            display: flex;
+            flex-direction: column; /* This makes it vertical */
+            gap: 25px;
         }
         .album-card {
             background: var(--card-bg);
@@ -90,20 +76,21 @@
             overflow: hidden;
             cursor: pointer;
             text-align: center;
+            border: 1px solid #333;
         }
-        .album-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .album-card p { padding: 10px; margin: 0; font-weight: bold; }
+        .album-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .album-card p { padding: 15px; margin: 0; font-weight: bold; font-size: 18px; }
 
         /* REELS VIEW */
         #reels-view { display: none; }
         .reel-item {
-            max-width: 500px;
-            margin: 0 auto 40px auto;
+            margin-bottom: 40px;
             border-bottom: 1px solid var(--card-bg);
+            padding-bottom: 20px;
         }
-        .reel-item img { width: 100%; display: block; }
+        .reel-item img { width: 100%; border-radius: 8px; display: block; }
         .reel-actions {
-            padding: 12px;
+            padding: 12px 0;
             display: flex;
             gap: 20px;
             align-items: center;
@@ -113,56 +100,46 @@
             text-decoration: none;
             background: var(--text);
             color: var(--bg);
-            padding: 5px 12px;
-            border-radius: 5px;
+            padding: 8px 18px;
+            border-radius: 20px;
             font-size: 14px;
             font-weight: bold;
-        }
-        .comment-box { padding: 0 12px 12px 12px; }
-        .comment-input {
-            width: 100%;
-            background: none;
-            border: none;
-            border-bottom: 1px solid var(--card-bg);
-            color: var(--text);
-            padding: 5px 0;
-            outline: none;
         }
 
         .back-btn {
             background: none;
-            border: none;
+            border: 1px solid #333;
             color: var(--text);
-            font-size: 18px;
+            padding: 8px 15px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body data-theme="dark">
 
 <header>
-    <h2 id="logo" onclick="showHome()" style="cursor:pointer">ModernBeautiz</h2>
-    <div class="theme-switch-wrapper">
-        <label class="theme-switch">
-            <input type="checkbox" id="checkbox" onchange="toggleTheme()" checked>
-            <div class="slider">
-                <span>☀️</span>
-                <span>🌙</span>
-            </div>
-        </label>
-    </div>
+    <div class="admin-dots" onclick="toggleAdmin()">⋮</div>
+    <h2 onclick="showHome()" style="cursor:pointer; margin:0;">ModernBeautiz</h2>
+    <label class="switch-box">
+        <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked>
+        <span class="slider"><span>☀️</span><span>🌙</span></span>
+    </label>
 </header>
 
+<div id="admin-menu">
+    <h4 style="margin: 0 0 10px 0;">Admin Dashboard</h4>
+    <button onclick="alert('Upload to GitHub & add to albumData in script.')">Add Album/Images</button>
+</div>
+
 <div class="container" id="home-view">
-    <div class="album-grid" id="album-list">
-        </div>
+    <div class="album-grid" id="album-list"></div>
 </div>
 
 <div class="container" id="reels-view">
     <button class="back-btn" onclick="showHome()">← Back to Albums</button>
-    <div id="reels-list">
-        </div>
+    <div id="reels-list"></div>
 </div>
 
 <script>
@@ -179,7 +156,7 @@
 
     function init() {
         const list = document.getElementById('album-list');
-        list.innerHTML = ''; // Clears the list before building
+        list.innerHTML = '';
         for (let actress in albumData) {
             const card = document.createElement('div');
             card.className = 'album-card';
@@ -191,17 +168,16 @@
             list.appendChild(card);
         }
 
-        // --- THE FIX: MOBILE BACK BUTTON LOGIC ---
+        // MOBILE BACK BUTTON FIX
         window.onpopstate = function(event) {
-            // This detects when the user presses the phone's physical back button
-            showHome(true); 
+            if (document.getElementById('reels-view').style.display === 'block') {
+                showHome(true); 
+            }
         };
     }
 
     function showAlbum(name) {
-        // This line creates a "fake" history entry so the back button has somewhere to go
         history.pushState({view: "album"}, ""); 
-
         document.getElementById('home-view').style.display = 'none';
         const reelsView = document.getElementById('reels-view');
         reelsView.style.display = 'block';
@@ -218,9 +194,6 @@
                     <button class="action-btn" onclick="this.innerHTML = '❤️'">🤍</button>
                     <a href="${imgSrc}" download class="download-link">Download Original HD</a>
                 </div>
-                <div class="comment-box">
-                    <input type="text" class="comment-input" placeholder="Add a comment...">
-                </div>
             `;
             list.appendChild(item);
         });
@@ -228,22 +201,28 @@
     }
 
     function showHome(isBackAction = false) {
-        // If they click the "Back to Albums" button on screen
         if (!isBackAction && history.state && history.state.view === "album") {
             history.back();
             return;
         }
-
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('reels-view').style.display = 'none';
         window.scrollTo(0,0);
     }
 
     function toggleTheme() {
-        const currentTheme = document.body.getAttribute('data-theme');
+        const body = document.body;
+        const currentTheme = body.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.body.setAttribute('data-theme', newTheme);
+        body.setAttribute('data-theme', newTheme);
+    }
+
+    function toggleAdmin() {
+        const menu = document.getElementById('admin-menu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
     init();
 </script>
+</body>
+</html>
