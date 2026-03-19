@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ModernBeautiz Gallery</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #111;
+  color: white;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #222;
+}
+
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.card {
+  position: relative;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.download {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: black;
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+}
+
+.light-mode {
+  background: white;
+  color: black;
+}
+
+.light-mode header {
+  background: #eee;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>ModernBeautiz Gallery</h2>
+  <button onclick="toggleMode()">Toggle Mode</button>
+</header>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+let images = [
+  {src: "image1.jpg", category: "Events"},
+  {src: "image2.jpg", category: "Friends"},
+  {src: "image3.jpg", category: "Travel"}
+];
+
+let gallery = document.getElementById("gallery");
+
+images.forEach(img => {
+  let div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <img src="${img.src}">
+    <a href="${img.src}" download class="download">Download</a>
+  `;
+
+  gallery.appendChild(div);
+});
+
+function toggleMode(){
+  document.body.classList.toggle("light-mode");
+}
+</script>
+
+</body>
+</html>
