@@ -147,14 +147,11 @@
 
 <script>
     // --- CONFIGURE YOUR ALBUMS HERE ---
-    // (Ensure you upload the images and use the correct file names below)
+    // base: The start of the filename
+    // count: How many images are in that album
     const albumData = {
-        "Malvika Mohan": [
-            "image1.jpg"
-        ],
-        "Actress Two": [
-            "20260304_013504.jpg"
-        ]
+        "Malvika Mohan": { base: "Malvika Mohan ", count: 2 }, 
+        "Actress Two": { base: "Actress2_", count: 1 }
     };
 
     function init() {
@@ -165,15 +162,16 @@
             card.className = 'album-card';
             card.onclick = () => showAlbum(actress);
             
-            // Displays the first image of the album as the original-size cover
+            // Uses "Name 1.jpg" as the cover
+            const coverImg = `${albumData[actress].base}1.jpg`;
+            
             card.innerHTML = `
-                <img src="${albumData[actress][0]}" alt="${actress}">
+                <img src="${coverImg}" alt="${actress}">
                 <p>${actress}</p>
             `;
             list.appendChild(card);
         }
 
-        // MOBILE BACK BUTTON FIX
         window.onpopstate = function(event) {
             if (document.getElementById('reels-view').style.display === 'block') {
                 showHome(true); 
@@ -190,12 +188,13 @@
         const list = document.getElementById('reels-list');
         list.innerHTML = '';
         
-        // Loop through and display original-size images inside the album
-        albumData[name].forEach(imgSrc => {
+        const data = albumData[name];
+
+        // This loop automatically creates all 1.jpg, 2.jpg, etc.
+        for (let i = 1; i <= data.count; i++) {
+            const imgSrc = `${data.base}${i}.jpg`;
             const item = document.createElement('div');
             item.className = 'reel-item';
-            
-            // Likes and comments sections have been removed
             item.innerHTML = `
                 <img src="${imgSrc}">
                 <div class="reel-actions">
@@ -203,7 +202,7 @@
                 </div>
             `;
             list.appendChild(item);
-        });
+        }
         window.scrollTo(0,0);
     }
 
@@ -226,5 +225,3 @@
 
     init();
 </script>
-</body>
-</html>
