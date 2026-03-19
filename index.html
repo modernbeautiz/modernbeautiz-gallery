@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModernBeautiz Gallery</title>
     <style>
-        :root { --bg: #ffffff; --text: #000000; --card-bg: #f2f2f2; --accent: #0095f6; --search-bg: #efefef; --white: #ffffff; }
+        :root { --bg: #ffffff; --text: #000000; --card-bg: #f2f2f2; --accent: #0095f6; --search-bg: #efefef; }
         [data-theme="dark"] { --bg: #000000; --text: #ffffff; --card-bg: #121212; --search-bg: #262626; }
 
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); transition: 0.3s; overflow-x: hidden; }
@@ -15,13 +15,13 @@
             padding: 10px 20px; position: sticky; top: 0; background: var(--bg); 
             z-index: 1000; border-bottom: 1px solid var(--search-bg); 
         }
-        header h2 { margin: 0; cursor: pointer; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        header h2 { margin: 0; cursor: pointer; font-size: 1.4rem; font-weight: 800; font-style: italic; }
 
         .header-right { display: flex; align-items: center; gap: 8px; }
 
         .search-container { position: relative; width: 120px; }
         #search-input { 
-            width: 100%; padding: 8px 10px 8px 30px; border-radius: 20px; 
+            width: 100%; padding: 8px 10px; border-radius: 20px; 
             border: none; background: var(--search-bg); color: var(--text); 
             box-sizing: border-box; font-size: 14px; outline: none;
         }
@@ -30,6 +30,7 @@
             background: var(--search-bg); border: none; color: var(--text);
             padding: 6px 12px; border-radius: 15px; cursor: pointer;
             font-size: 12px; font-weight: 700; transition: 0.2s; white-space: nowrap;
+            display: flex; align-items: center; gap: 4px;
         }
         .request-btn { background: #0084ff; color: white; }
 
@@ -37,80 +38,67 @@
             header { flex-direction: column; gap: 12px; padding: 15px; text-align: center; }
             .header-right { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
             .search-container { width: 100%; order: -1; }
+            #search-input { text-align: center; }
         }
 
-        .container { padding: 0 15px 15px 15px; max-width: 500px; margin: auto; }
-        .instruction { text-align: center; font-size: 0.95rem; margin: 15px 0 5px 0; font-weight: 500; opacity: 0.8; }
+        .container { padding: 0 15px 15px 15px; max-width: 500px; margin: auto; min-height: 70vh; }
+        .instruction { text-align: center; font-size: 0.95rem; margin: 15px 0 5px 0; font-weight: 600; opacity: 0.8; text-transform: uppercase; }
 
-        /* ALBUM CARDS IMPROVED */
+        /* ALBUM CARDS - RECTIFIED FOR FULL IMAGE VIEW */
         .album-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 10px; }
         .album-card { 
             background: var(--card-bg); border-radius: 16px; overflow: hidden; 
             cursor: pointer; border: 1px solid #333; transition: transform 0.2s;
         }
         .album-card:active { transform: scale(0.97); }
-        .album-card img { width: 100%; display: block; object-fit: cover; height: 250px; background: #000; }
-        
-        /* BRIGHTER LARGER FONT */
-        .album-card p { 
-            padding: 15px; margin: 0; font-weight: 800; font-size: 20px; 
-            text-align: center; color: var(--text); text-transform: uppercase; letter-spacing: 1px;
+        /* Changed to contain and removed fixed height to show full image */
+        .album-card img { width: 100%; display: block; object-fit: contain; background: #000; max-height: 500px; }
+        .album-card p { padding: 15px; margin: 0; font-weight: 800; font-size: 22px; text-align: center; color: var(--text); text-transform: uppercase; font-style: italic; }
+
+        /* NO RESULTS MESSAGE */
+        #no-results { 
+            display: none; text-align: center; margin-top: 50px; 
+            font-weight: 500; line-height: 1.6; color: var(--accent); padding: 20px;
         }
 
-        /* OPENING ANIMATION */
-        .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        /* COMING SOON SECTION */
+        .coming-soon { margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid var(--search-bg); }
+        .coming-soon h3 { font-size: 1.1rem; margin-bottom: 15px; opacity: 0.9; }
+        .badge-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .badge { background: var(--search-bg); padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: 600; opacity: 0.7; }
 
         #reels-view { display: none; }
         .reel-item { margin-bottom: 30px; background: #000; border-radius: 12px; overflow: hidden; }
-        .reel-item img { width: 100%; display: block; max-height: 80vh; object-fit: contain; }
+        .reel-item img { width: 100%; display: block; max-height: 85vh; object-fit: contain; }
         
-        .reel-actions { 
-            padding: 15px; display: flex; flex-direction: column; 
-            gap: 10px; align-items: center; background: var(--bg); 
-        }
-
-        .preview-link { 
-            text-decoration: none; background: #444; color: white; 
-            padding: 10px 40px; border-radius: 25px; font-weight: 700; width: 80%; text-align: center;
-        }
-        .download-link { 
-            text-decoration: none; background: var(--accent); color: white; 
-            padding: 12px 40px; border-radius: 25px; font-weight: 800; width: 80%; text-align: center;
-        }
+        .reel-actions { padding: 15px; display: flex; flex-direction: column; gap: 10px; align-items: center; background: var(--bg); }
+        .preview-link { text-decoration: none; background: #444; color: white; padding: 12px; border-radius: 25px; font-weight: 700; width: 85%; text-align: center; border: none; cursor: pointer; }
+        .download-link { text-decoration: none; background: var(--accent); color: white; padding: 14px; border-radius: 25px; font-weight: 800; width: 85%; text-align: center; }
 
         /* PREVIEW MODAL */
-        #preview-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center;
-        }
-        #preview-modal img { max-width: 95%; max-height: 95%; object-fit: contain; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .close-preview { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; font-weight: bold; cursor: pointer; background: rgba(0,0,0,0.5); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        #preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; }
+        #preview-modal img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .close-preview { position: absolute; top: 25px; right: 25px; color: white; font-size: 35px; cursor: pointer; z-index: 2100; }
 
-        .back-btn { background: none; border: none; color: var(--accent); font-size: 17px; font-weight: 800; cursor: pointer; padding: 20px 0; }
-        
-        .switch-box { position: relative; width: 45px; height: 24px; flex-shrink: 0; }
-        .switch-box input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; display: flex; align-items: center; padding: 0 5px; }
-        .slider:after { content: '🌙'; font-size: 11px; margin-left: auto; }
-        input:checked + .slider:after { content: '☀️'; margin-right: auto; margin-left: 0; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; z-index: 2; }
-        input:checked + .slider { background-color: #444; }
-        input:checked + .slider:before { transform: translateX(21px); }
+        footer { padding: 40px 20px; text-align: center; background: var(--card-bg); margin-top: 50px; }
+        .footer-btn { background: #1877F2; color: white; border: none; padding: 12px 25px; border-radius: 25px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 15px; }
 
-        #scrollTopBtn {
-            display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; 
-            border: none; background-color: var(--accent); color: white; cursor: pointer; 
-            width: 50px; height: 50px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-            transition: 0.3s; align-items: center; justify-content: center; font-size: 24px;
-        }
+        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 30px; padding: 12px; position: fixed; z-index: 3000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 600; }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        .back-btn { background: none; border: none; color: var(--accent); font-size: 18px; font-weight: 800; cursor: pointer; padding: 20px 0; }
+        #scrollTopBtn { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; background: var(--accent); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; justify-content: center; align-items: center; font-size: 24px; }
         #scrollTopBtn.show { display: flex; }
+
+        .fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body data-theme="dark">
+
+<div id="toast">Link Copied!</div>
 
 <div id="preview-modal" onclick="closePreview()">
     <span class="close-preview">&times;</span>
@@ -120,34 +108,44 @@
 <header>
     <h2 onclick="showHome()">ModernBeautiz</h2>
     <div class="header-right">
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search..." oninput="filterAlbums()">
-        </div>
+        <div class="search-container"><input type="text" id="search-input" placeholder="Search..." oninput="filterAlbums()"></div>
         <button class="btn-action request-btn" onclick="requestActress()">💬 Request</button>
         <button class="btn-action" onclick="shareGallery()">🔗 Share</button>
-        <label class="switch-box">
-            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked>
-            <span class="slider"></span>
-        </label>
+        <label style="display:none"><input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked></label>
     </div>
 </header>
 
 <div class="container" id="home-view">
-    <p class="instruction">✨ CLICK AN ALBUM TO OPEN</p>
+    <p class="instruction" id="main-instruction">✨ Click an album to open</p>
+    <div id="no-results"></div>
     <div id="album-list" class="album-grid"></div>
+
+    <div class="coming-soon" id="coming-soon-sec">
+        <h3>🔥 COMING SOON</h3>
+        <div class="badge-container">
+            <span class="badge">Anushka Shetty</span>
+            <span class="badge">Nayanthara</span>
+            <span class="badge">Keerthy Suresh</span>
+        </div>
+    </div>
 </div>
 
 <div class="container" id="reels-view">
-    <button class="back-btn" onclick="showHome()">← Back to List</button>
+    <button class="back-btn" onclick="showHome()">← Back to Gallery</button>
     <div id="reels-list"></div>
 </div>
+
+<footer>
+    <a href="https://www.facebook.com/share/1AAphd8WLs/" class="footer-btn" target="_blank">Follow us on Facebook</a>
+    <p>&copy; 2026 ModernBeautiz • HD Actress Gallery</p>
+</footer>
 
 <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 
 <script>
     const albumData = {
         "Malvika Mohan": ["image1.jpg", "image2.jpg"],
-        "Raashi Khanna": ["Raashi Khanna 001.jpg", "Raashi Khanna 002.jpg","Raashi Khanna 003.jpg","Raashi Khanna 004.jpg"],
+        "Raashi Khanna": ["Raashi Khanna 001.jpg", "Raashi Khanna 002.jpg"],
         "Rashmika Mandanna": ["Rashmika Mandanna 001.jpg"]
     };
 
@@ -157,33 +155,59 @@
         for (let actress in albumData) {
             const card = document.createElement('div');
             card.className = 'album-card';
-            card.setAttribute('data-name', actress.toLowerCase());
             card.onclick = () => showAlbum(actress);
             card.innerHTML = `<img src="${albumData[actress][0]}" alt="${actress}"><p>${actress}</p>`;
             list.appendChild(card);
         }
     }
 
-    // --- NAVIGATION CONTROL ---
-    window.onpopstate = (event) => {
-        const modal = document.getElementById('preview-modal');
-        if (modal.style.display === 'flex') {
-            closePreview(true); // Close modal if back pressed
-        } else if (document.getElementById('reels-view').style.display === 'block') {
-            showHome(true); // Go home if back pressed in album
+    // --- RECTIFIED FILTER FUNCTION ---
+    function filterAlbums() {
+        const q = document.getElementById('search-input').value.toLowerCase();
+        const cards = document.querySelectorAll('.album-card');
+        const instruction = document.getElementById('main-instruction');
+        const noResults = document.getElementById('no-results');
+        const comingSoon = document.getElementById('coming-soon-sec');
+        
+        let foundAny = false;
+
+        // Hide instruction as soon as user types
+        instruction.style.display = q.length > 0 ? "none" : "block";
+
+        cards.forEach(c => {
+            const name = c.innerText.toLowerCase();
+            if(name.includes(q)) {
+                c.style.display = "block";
+                foundAny = true;
+            } else {
+                c.style.display = "none";
+            }
+        });
+
+        if (!foundAny && q.length > 0) {
+            noResults.innerHTML = `Sorry, "${q}" was not found.<br>It may be added or updated soon—stay connected!`;
+            noResults.style.display = "block";
+            comingSoon.style.display = "none";
+        } else {
+            noResults.style.display = "none";
+            comingSoon.style.display = "block";
         }
+    }
+
+    window.onpopstate = () => {
+        if (document.getElementById('preview-modal').style.display === 'flex') closePreview(true);
+        else if (document.getElementById('reels-view').style.display === 'block') showHome(true);
     };
 
     function showAlbum(name) {
         history.pushState({view: "album"}, ""); 
-        const reelsView = document.getElementById('reels-view');
-        const reelsList = document.getElementById('reels-list');
-        
         document.getElementById('home-view').style.display = 'none';
+        const reelsView = document.getElementById('reels-view');
         reelsView.style.display = 'block';
-        reelsView.classList.add('fade-in-up'); // Trigger animation
+        reelsView.classList.add('fade-in-up');
 
-        reelsList.innerHTML = '';
+        const list = document.getElementById('reels-list');
+        list.innerHTML = '';
         albumData[name].forEach(imgSrc => {
             const item = document.createElement('div');
             item.className = 'reel-item';
@@ -193,61 +217,49 @@
                     <button class="preview-link" onclick="openPreview('${imgSrc}')">View Full Image</button>
                     <a href="${imgSrc}" download class="download-link">Download HD</a>
                 </div>`;
-            reelsList.appendChild(item);
+            list.appendChild(item);
         });
         window.scrollTo(0,0);
-        setTimeout(() => reelsView.classList.remove('fade-in-up'), 500);
     }
 
     function openPreview(src) {
         history.pushState({view: "preview"}, ""); 
-        const modal = document.getElementById('preview-modal');
         document.getElementById('modal-img').src = src;
-        modal.style.display = 'flex';
+        document.getElementById('preview-modal').style.display = 'flex';
     }
 
-    function closePreview(isBackAction = false) {
-        if (!isBackAction) history.back();
+    function closePreview(isBack = false) {
+        if (!isBack) history.back();
         document.getElementById('preview-modal').style.display = 'none';
     }
 
-    function showHome(isBackAction = false) {
-        if (!isBackAction && history.state && history.state.view === "album") {
-            history.back(); return;
-        }
+    function showHome(isBack = false) {
+        if (!isBack && history.state?.view === "album") { history.back(); return; }
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('reels-view').style.display = 'none';
         window.scrollTo(0,0);
     }
 
+    function showToast(msg) {
+        const x = document.getElementById("toast");
+        x.innerHTML = msg; x.className = "show";
+        setTimeout(() => { x.className = ""; }, 3000);
+    }
+
     function requestActress() { window.open(`https://m.me/61574366687042`, '_blank'); }
 
     async function shareGallery() {
-        const shareData = { title: 'ModernBeautiz', text: 'Top Actress Gallery', url: window.location.href };
-        if (navigator.share) { try { await navigator.share(shareData); } catch (err) {} } 
-        else { navigator.clipboard.writeText(window.location.href); alert("Link Copied!"); }
-    }
-
-    function filterAlbums() {
-        const query = document.getElementById('search-input').value.toLowerCase();
-        const cards = document.getElementsByClassName('album-card');
-        for (let card of cards) {
-            const name = card.getAttribute('data-name');
-            card.style.display = name.includes(query) ? "block" : "none";
-        }
+        const data = { title: 'ModernBeautiz', text: 'Top Actress Gallery', url: window.location.href };
+        if (navigator.share) { try { await navigator.share(data); } catch(e){} }
+        else { navigator.clipboard.writeText(window.location.href); showToast("Link Copied!"); }
     }
 
     function toggleTheme() {
         const body = document.body;
-        const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        body.setAttribute('data-theme', newTheme);
+        body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     }
 
-    window.onscroll = function() {
-        const btn = document.getElementById("scrollTopBtn");
-        btn.classList.toggle("show", window.scrollY > 400);
-    };
-
+    window.onscroll = () => { document.getElementById("scrollTopBtn").classList.toggle("show", window.scrollY > 400); };
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
     init();
