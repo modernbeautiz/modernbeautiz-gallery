@@ -34,6 +34,14 @@
         }
         .request-btn { background: #0084ff; color: white; }
 
+        /* THEME BUTTON STYLE */
+        .theme-btn {
+            background: var(--search-bg); border: none; color: var(--text);
+            width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; transition: 0.2s;
+        }
+
         @media (max-width: 480px) {
             header { flex-direction: column; gap: 12px; padding: 15px; text-align: center; }
             .header-right { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px; }
@@ -106,8 +114,8 @@
     <div class="header-right">
         <div class="search-container"><input type="text" id="search-input" placeholder="Search..." oninput="filterAlbums()"></div>
         <button class="btn-action request-btn" onclick="requestActress()">💬 Request</button>
+        <button class="theme-btn" id="theme-icon" onclick="toggleTheme()">🌙</button>
         <button class="btn-action" onclick="shareGallery()">🔗 Share</button>
-        <label style="display:none"><input type="checkbox" id="theme-toggle" onchange="toggleTheme()" checked></label>
     </div>
 </header>
 
@@ -274,9 +282,17 @@
         else { navigator.clipboard.writeText(window.location.href); showToast("Link Copied!"); }
     }
 
+    // UPDATED THEME LOGIC
     function toggleTheme() {
         const body = document.body;
-        body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        const icon = document.getElementById('theme-icon');
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.setAttribute('data-theme', 'light');
+            icon.innerHTML = "☀️";
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            icon.innerHTML = "🌙";
+        }
     }
 
     window.onscroll = () => { document.getElementById("scrollTopBtn").classList.toggle("show", window.scrollY > 400); };
