@@ -54,10 +54,6 @@
         .album-card img { width: 100%; display: block; object-fit: contain; background: #000; max-height: 500px; }
         .album-card p { padding: 15px; margin: 0; font-weight: 800; font-size: 22px; text-align: center; color: var(--text); text-transform: uppercase; font-style: italic; }
 
-        /* VIEW COUNTER BADGES */
-        .view-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-        .img-views { font-size: 12px; opacity: 0.7; font-weight: 600; margin-top: -5px; }
-
         #no-results { 
             display: none; text-align: center; margin-top: 50px; 
             font-weight: 500; line-height: 1.6; color: var(--accent); padding: 20px;
@@ -144,22 +140,14 @@
 
 <script>
     const albumData = {
-        "Tamannaah": ["Tamannaah 001.jpg", "Tamannaah 001.jpg", "Tamannaah 002.jpg", "Tamannaah 003.jpg", "Tamannaah 004.jpg"],
+        "Tamannaah": ["Tamannaah 001.jpg", "Tamannaah 002.jpg", "Tamannaah 003.jpg", "Tamannaah 004.jpg"],
         "Raashi Khanna": ["Raashi Khanna 001.jpg", "Raashi Khanna 002.jpg", "Raashi Khanna 003.jpg", "Raashi Khanna 004.jpg"],
         "Rashmika Mandanna": ["Rashmika Mandanna 001.jpg"]
     };
 
     let isSearching = false;
 
-    // --- VIEW COUNTER LOGIC ---
-    function getViews(id) { return localStorage.getItem('view_' + id) || 0; }
-    function addView(id) { 
-        let current = parseInt(getViews(id));
-        localStorage.setItem('view_' + id, current + 1);
-    }
-
     function init() {
-        // Prevent immediate exit on Home by pushing an initial state
         if (!history.state || history.state.view !== "home") {
             history.replaceState({view: "home"}, "");
             history.pushState({view: "home"}, "");
@@ -168,12 +156,10 @@
         const list = document.getElementById('album-list');
         list.innerHTML = '';
         for (let actress in albumData) {
-            const views = getViews(actress);
             const card = document.createElement('div');
             card.className = 'album-card';
-            card.onclick = () => { addView(actress); showAlbum(actress); };
+            card.onclick = () => { showAlbum(actress); };
             card.innerHTML = `
-                <div class="view-count">👁️ ${views}</div>
                 <img src="${albumData[actress][0]}" alt="${actress}">
                 <p>${actress}</p>`;
             list.appendChild(card);
@@ -184,6 +170,123 @@
         const q = document.getElementById('search-input').value.toLowerCase();
         const cards = document.querySelectorAll('.album-card');
         const instruction = document.getElementById('main-instruction');
+        const noResults = document.getElementById('no-results');
+        const comingSoon = document.getElementById('coming-soon-sec');
+        
+        if (q.length > 0 && !isSearching) {
+            isSearching = true;
+            history.pushState({view: "search"}, "");
+        } else if (q.length === 0 && isSearching) {
+            isSearching = false;
+            if(history.state?.view === "search") history.back();
+        }
+
+        let foundAny = false;
+        instruction.style.display = q.length > 0 ? "none" : "block";
+
+        cards.forEach(c => {
+            const name = c.innerText.toLowerCase();
+            if(name.includes(q)) {
+                c.style.display = "block";
+                foundAny = true;
+            } else {
+                c.style.display = "none";
+            }
+        });
+
+        if (!foundAny && q.length > 0) {
+            noResults.innerHTML = `Sorry, "${q}" was not found.<br>It may be added or updated soon—stay connected!`;
+            noResults.style.display = "block";
+            comingSoon.style.display = "none";
+        } else {
+            noResults.style.display = "none";
+            comingSoon.style.display = "block";
+        }
+    }
+
+    window.onpopstate = () => {
+        if (document.getElementById('preview-modal').style.display === 'flex') {
+            closePreview(true);
+        } else if (document.getElementById('reels-view').style.display === 'block') {
+            showHome(true);
+        } else if (isSearching) {
+            isSearching = false;
+            document.getElementById('search-input').value = "";
+            filterAlbums();
+        } else if (history.state?.view === "home") {
+            history.pushState({view: "home"}, "");
+        }
+    };
+
+    function showAlbum(name) {
+        history.pushState({view: "album"}, ""); 
+        document.getElementById('home-view').style.display = 'none';
+        const reelsView = document.getElementById('reels-view');
+        reelsView.style.display = 'block';
+        reelsView.classList.add('fade-in-up');
+
+        const list = document.getElementById('reels-list');
+        list.innerHTML = '';
+        albumData[name].forEach(imgSrc => {
+            const item = document.createElement('div');
+            item.className = 'reel-item';
+            item.innerHTML = `
+                <img src="${imgSrc}" loading="lazy">
+                <div class="reel-actions">
+                    <button class="preview-link" onclick="openPreview('${imgSrc}')">View Full Image</button>
+                    <a href="${imgSrc}" download class="download-link">Download HD</a>
+                </div>`;
+            list.appendChild(item);
+        });
+        window.scrollTo(0,0);
+    }
+
+    function openPreview(src) {
+        history.pushState({view: "preview"}, ""); 
+        document.getElementById('modal-img').src = src;
+        document.getElementById('preview-modal').style.display = 'flex';
+    }
+
+    function closePreview(isBack = false) {
+        if (!isBack) history.back();
+        document.getElementById('preview-modal').style.display = 'none';
+    }
+
+    function showHome(isBack = false) {
+        if (!isBack && history.state?.view === "album") { history.back(); return; }
+        document.getElementById('home-view').style.display = 'block';
+        document.getElementById('reels-view').style.display = 'none';
+        init();
+        window.scrollTo(0,0);
+    }
+
+    function showToast(msg) {
+        const x = document.getElementById("toast");
+        x.innerHTML = msg; x.className = "show";
+        setTimeout(() => { x.className = ""; }, 3000);
+    }
+
+    function requestActress() { window.open(`https://m.me/61574366687042`, '_blank'); }
+
+    async function shareGallery() {
+        const data = { title: 'ModernBeautiz', text: 'Top Actress Gallery', url: window.location.href };
+        if (navigator.share) { try { await navigator.share(data); } catch(e){} }
+        else { navigator.clipboard.writeText(window.location.href); showToast("Link Copied!"); }
+    }
+
+    function toggleTheme() {
+        const body = document.body;
+        body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    }
+
+    window.onscroll = () => { document.getElementById("scrollTopBtn").classList.toggle("show", window.scrollY > 400); };
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    init();
+</script>
+</body>
+</html>
+ment.getElementById('main-instruction');
         const noResults = document.getElementById('no-results');
         const comingSoon = document.getElementById('coming-soon-sec');
         
